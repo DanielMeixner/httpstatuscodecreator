@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpstatuscodecreator  
+  labels:
+    app: httpstatuscodecreator    
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpstatuscodecreator
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate    
+  template:
+    metadata:
+      annotations:
+          dapr.io/enabled: "true"
+          dapr.io/app-id: "httpstatuscodecreator"          
+          dapr.io/app-port: "80"
+          dapr.io/config: "appconfig"
+          dapr.io/log-level: "debug"          
+      labels:
+        app: httpstatuscodecreator        
+    spec:
+      containers:
+      - name: httpstatuscodecreator        
+        image: dmxacrmaster-microsoft.azurecr.io/httpstatuscodecreator
+        imagePullPolicy: Always
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+          - containerPort: 80
+            name: http         
+            protocol: TCP
+        env: 
+          - name: "PORT"
+            value: "80"          
+          - name: "APPINSIGHTS_INSTRUMENTATIONKEY"
+            value: "917bb16b-a918-4192-9949-d9151240aeb7"      
+          
